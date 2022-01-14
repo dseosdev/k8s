@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-pvc-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx-pvc-app
+  minReadySeconds: 5
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-pvc-app
+    spec:
+      containers:
+        - name: niginx-pvc
+          image: mcr.microsoft.com/oss/nginx/nginx:1.15.5-alpine
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - mountPath: "/mnt/azure"
+              name: volume
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: azure-managed-disk
