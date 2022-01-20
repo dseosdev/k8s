@@ -41,3 +41,12 @@ services:
     depends_on:
       - php
       - database
+ 
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 9100:80
+    environment:
+      PMA_HOST: database
+

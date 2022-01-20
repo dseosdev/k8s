@@ -1,0 +1,9 @@
+{
+    "name": "phalcon/app",
+    "autoload": {
+        "psr-4": {
+            "Phalcon\\App\\": "src/"
+        }
+    },
+    "require": {}
+}
