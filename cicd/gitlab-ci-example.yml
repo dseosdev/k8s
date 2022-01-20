@@ -1,0 +1,14 @@
+stages:
+  - init
+  - despliegue
+
+hello:
+  stage: init
+  script:
+    - echo "Despliegue iniciado"
+
+deploy:
+  stage: despliegue
+  script:
+    - cd /var/www/html
+    - git pull ${CI_REPOSITORY_URL}

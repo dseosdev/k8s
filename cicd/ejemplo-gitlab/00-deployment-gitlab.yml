@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-deployment
+spec:
+  selector:
+    matchLabels:
+      app: gitlab
+  minReadySeconds: 5
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gitlab
+    spec:
+      containers:
+      - name: gitlab
+        image: gitlab/gitlab-ce
+        ports:
+        - containerPort: 80
+
