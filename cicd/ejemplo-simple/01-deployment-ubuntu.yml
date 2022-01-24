@@ -17,6 +17,6 @@ spec:
       containers:
       - name: ubuntu
         image: ubuntu
-        command: ["sleep", "100"]
+        command: ["sleep", "123456"]
       nodeSelector:
         kubernetes.io/os: linux

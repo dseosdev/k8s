@@ -8,4 +8,4 @@ spec:
   storageClassName: default #managed-premium para premium
   resources:
     requests:
-      storage: 1Gi # 1gb de almacenamiento
+      storage: 5Gi
