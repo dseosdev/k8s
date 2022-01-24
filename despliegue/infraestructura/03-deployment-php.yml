@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deployment
+spec:
+  selector:
+    matchLabels:
+      app: php
+  minReadySeconds: 5
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+      - name: php
+        image: pruebascurso.azurecr.io/finalcurso-php:1.0
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - mountPath: "/var/www"
+          name: volume-www
+      volumes:
+        - name: volume-www
+          persistentVolumeClaim:
+            claimName: www-disk

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: clusterip-php
+spec:
+  selector:
+    app: php
+  ports:
+    # Por defecto y por comodidad, el `TargetPort` tiene el mismo valor que el campo `port.
+    - port: 9000
+      targetPort: 9000

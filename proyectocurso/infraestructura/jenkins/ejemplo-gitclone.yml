@@ -1,0 +1,42 @@
+pipeline{
+
+	agent any
+	
+	stages {
+
+		stage('Git clone') {
+
+			steps {
+				sh 'git clone https://github.com/symfony/demo.git ~/symfony-demo'
+			}
+		}
+		
+		stage('Listar ficheros') {
+
+			steps {
+				sh 'ls ~/symfony-demo'
+			}
+		}
+		
+		stage('Añadir fichero') {
+			steps {
+				sh 'touch ~/symfony-demo/public/prueba.txt'
+			}
+		}
+		
+		stage('Listar ficheros en public') {
+
+			steps {
+				sh 'ls -lah ~/symfony-demo/public'
+			}
+		}
+		
+		stage('Borrar directorio') {
+
+			steps {
+				sh 'rm -Rf ~/symfony-demo'
+			}
+		}
+		
+	}
+}
