@@ -21,21 +21,21 @@ spec:
             container ('php') {
                  //stage('Borrar directorio') {
 			        
-			      //      sh 'rm -Rf /var/www/symfony-demo'
+			      //      sh 'rm -Rf /var/www/symfony'
 			        
 		        //}
 		        
 		        stage('Git clone') {
 		            sh '''
 		            
-		                if [ -d "/var/www/symfony-demo" ] 
+		                if [ -d "/var/www/symfony" ] 
                     then
                         echo 'Yes'
-                        cd /var/www/symfony-demo
-                      git pull
+                        cd /var/www/symfony
+                        git pull
                     else
                         echo 'No'
-                        git clone https://github.com/symfony/demo.git /var/www/symfony-demo
+                        git clone https://github.com/dseosdev/symfony-demo.git /var/www/symfony
 
                     fi
 
@@ -46,7 +46,7 @@ spec:
 		        stage('Composer update') {
 			        
 			            sh '''
-			            cd /var/www/symfony-demo
+			            cd /var/www/symfony
                         ls -lah
                         composer update
                         '''
