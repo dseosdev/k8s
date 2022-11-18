@@ -1,0 +1,59 @@
+podTemplate(yaml: '''
+apiVersion: v1
+kind: Pod
+spec:
+  #securityContext:
+  #  runAsUser: 1000
+  containers:
+  - name: php
+    image: dseos/app-symfony-php8:1.2
+    volumeMounts:
+        - mountPath: "/var/www"
+          name: volume-www
+  volumes:
+        - name: volume-www
+          persistentVolumeClaim:
+            claimName: www-disk
+
+''') {
+    node(POD_LABEL) {
+  
+            container ('php') {
+                 #stage('Borrar directorio') {
+			        
+			      #      sh 'rm -Rf /var/www/symfony-demo'
+			        
+		        #}
+		        
+		        stage('Git clone') {
+		            sh '''
+		            
+		                if [ -d "/var/www/symfony-demo" ] 
+then
+    echo 'Yes'
+    cd /var/www/symfony-demo
+	git pull
+else
+    echo 'No'
+    git clone https://github.com/symfony/demo.git /var/www/symfony-demo
+
+fi
+
+'''
+
+			        
+		        }	
+		        stage('Composer update') {
+			        
+			            sh '''
+			            cd /var/www/symfony-demo
+                        ls -lah
+                        composer update
+                        '''
+				
+			        
+		        }
+	      
+        }   
+    }
+}
