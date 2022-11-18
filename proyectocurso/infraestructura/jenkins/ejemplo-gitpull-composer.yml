@@ -2,8 +2,8 @@ podTemplate(yaml: '''
 apiVersion: v1
 kind: Pod
 spec:
-  #securityContext:
-  #  runAsUser: 1000
+  // securityContext:
+  // runAsUser: 1000
   containers:
   - name: php
     image: dseos/app-symfony-php8:1.2
@@ -19,34 +19,34 @@ spec:
     node(POD_LABEL) {
   
             container ('php') {
-                 #stage('Borrar directorio') {
+                 //stage('Borrar directorio') {
 			        
-			      #      sh 'rm -Rf /var/www/symfony-demo'
+			      //      sh 'rm -Rf /var/www/symfony'
 			        
-		        #}
+		        //}
 		        
 		        stage('Git clone') {
 		            sh '''
 		            
-		                if [ -d "/var/www/symfony-demo" ] 
-then
-    echo 'Yes'
-    cd /var/www/symfony-demo
-	git pull
-else
-    echo 'No'
-    git clone https://github.com/symfony/demo.git /var/www/symfony-demo
+		                if [ -d "/var/www/symfony" ] 
+                    then
+                        echo 'Yes'
+                        cd /var/www/symfony
+                        git pull
+                    else
+                        echo 'No'
+                        git clone https://github.com/dseosdev/symfony-demo.git /var/www/symfony
 
-fi
+                    fi
 
-'''
+                '''
 
 			        
 		        }	
 		        stage('Composer update') {
 			        
 			            sh '''
-			            cd /var/www/symfony-demo
+			            cd /var/www/symfony
                         ls -lah
                         composer update
                         '''
