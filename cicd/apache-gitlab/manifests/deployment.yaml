@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-gitlab
+spec:
+  selector:
+    matchLabels:
+      app: apache-gitlab
+  minReadySeconds: 5
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: apache-gitlab
+    spec:
+      containers:
+      - name: apache-gitlab
+        image: dseos/pruebagitlab:<VERSION>
+        ports:
+        - containerPort: 80

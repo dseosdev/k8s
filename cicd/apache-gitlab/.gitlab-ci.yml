@@ -1,0 +1,106 @@
+image: docker:latest
+services:
+  - docker:dind
+
+stages:
+  - build
+  - deploy
+
+variables:
+  CONTAINER_IMAGE: dseos/pruebagitlab:${CI_COMMIT_SHORT_SHA}
+
+build:
+  stage: build
+  script:
+    - ls
+    - docker build -t ${CONTAINER_IMAGE} .
+    - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE}
+    - docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+    - docker push ${CONTAINER_IMAGE}
+
+deploy:
+  stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  script:
+    - kubectl config get-contexts
+    - kubectl config use-context david.rodriguez.miguel/cursok8s:pruebaagente
+    - cd manifests/
+    - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" deployment.yaml
+    - kubectl apply -f deployment.yaml
+    - kubectl apply -f service.yaml
+    - kubectl get pods
+    - kubectl get svc
+
+# deploy:
+#   stage: deploy
+#   image: alpine:3.7
+#   environment:
+#     name: ${CI_COMMIT_REF_SLUG}
+#     url: http://${CI_COMMIT_REF_SLUG}-${CI_PROJECT_PATH_SLUG}.tudominio.org
+#   script:
+#     - apk update  && apk add --no-cache curl grep
+#     - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+#     - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+#     - mkdir -p ${HOME}/.kube
+#     - cat ${KUBECONFIG} > $HOME/.kube/config
+#     - kubectl version
+#     - cd manifests/
+#     - kubectl apply -f deployment.yaml
+#     - kubectl apply -f service.yaml
+#     - kubectl apply -f ingress.yaml
+#     - kubectl rollout status -f deployment.yaml
+#     - kubectl get all,ing -l app=${CI_COMMIT_REF_SLUG} --namespace=${CI_PROJECT_PATH_SLUG}   
+    # - kubectl config set-cluster k8s --server="${SERVER}"
+    # - kubectl config set clusters.k8s.certificate-authority-data ${CERTIFICATE_AUTHORITY_DATA}
+    # - kubectl config set-credentials gitlab --token="${USER_TOKEN}"
+    # - kubectl config set-context default --cluster=k8s --user=gitlab
+    # - kubectl config use-context default
+    # - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" deployment.yaml
+    # - kubectl apply -f deployment.yaml
+
+
+# deploy:
+#   image: alpine:3.7
+#   stage: run
+#   environment:
+#     name: ${CI_COMMIT_REF_SLUG}
+#     url: http://${CI_COMMIT_REF_SLUG}-${CI_PROJECT_PATH_SLUG}.tudominio.org
+#   only:
+#     - /^release.*$/
+#     - master
+#     - develop
+#   script:
+#     - apk update  && apk add --no-cache curl grep
+#     - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+#     - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+#     - mkdir -p ${HOME}/.kube
+#     - cat ${KUBECONFIG} > $HOME/.kube/config
+#     - kubectl version
+#     - cd manifests/
+#     - kubectl apply -f deployment.yaml
+# #    - kubectl apply -f service.yaml
+# #    - kubectl apply -f ingress.yaml
+# #    - kubectl rollout status -f deployment.yaml
+#     - kubectl get all,ing -l app=${CI_COMMIT_REF_SLUG} --namespace=${CI_PROJECT_PATH_SLUG}
+#   tags:
+#     - docker
+
+
+
+
+#stages:
+#  - init
+#  - despliegue
+
+#hello:
+#  stage: init
+#  script:
+#    - echo "Despliegue iniciado"
+
+#deploy:
+#  stage: despliegue
+#  script:
+#    - cd /var/www/html
+#    - git pull ${CI_REPOSITORY_URL}
