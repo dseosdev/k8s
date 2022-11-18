@@ -14,37 +14,70 @@ spec:
     spec:
       serviceAccountName: jenkins-admin
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        #runAsUser: 1000
+        #runAsGroup: 1000
+        #fsGroup: 1000
       containers:
+      - name: docker
+        image: docker:dind
+        command: ["dockerd"]
+        args: ["-H", "tcp://127.0.0.1:2376"]
+        ports:
+          - name: docker
+            containerPort: 2376
+        securityContext:
+          privileged: true
       - name: jenkins
-        image: jenkins/jenkins:lts-jdk11
+        securityContext:
+          runAsUser: 0
+        image: dseos/jenkins-docker:0.1
+        #image: jenkinsci/blueocean
+        #image: jenkins/jenkins
+        #image: skogie/jenkins-kubectl
+        #image: trion/jenkins-docker-client
         ports:
         - name: http
           containerPort: 8080
         - name : jnlp
           containerPort: 50000
-        livenessProbe:
-          httpGet:
-            path: "/login"
-            port: 8080
-          initialDelaySeconds: 90
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 5
-        readinessProbe:
-          httpGet:
-            path: "/login"
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
+        
+        #livenessProbe:
+        #  httpGet:
+        #    path: "/login"
+        #    port: 8080
+        #  initialDelaySeconds: 90
+        #  periodSeconds: 10
+        #  timeoutSeconds: 5
+        #  failureThreshold: 5
+        #readinessProbe:
+        #  httpGet:
+        #    path: "/login"
+        #    port: 8080
+        #  initialDelaySeconds: 60
+        #  periodSeconds: 10
+        #  timeoutSeconds: 5
+        #  failureThreshold: 3
+        env:
+            - name: "JAVA_OPTS"
+              value: "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL=3600"
+            - name: "USER"
+              value: "jenkins"
         volumeMounts:
         - name: jenkins-home
           mountPath: /var/jenkins_home
+        - mountPath: /var/run/docker.sock
+          name: docker-socket
+        #command: ["/bin/sh"]
+        #args: ["-c", "usermod -aG docker $USER"]
+        #- mountPath: /usr/bin/docker
+        #  name: docker-exec
       volumes:
       - name: jenkins-home
         persistentVolumeClaim:
           claimName: jenkins-disk
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock
+      #- name: docker-exec
+      #  hostPath:
+      #    path: /usr/bin/docker

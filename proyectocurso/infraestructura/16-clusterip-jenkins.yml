@@ -11,5 +11,8 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
+    - name: docker
+      port: 2376
+      targetPort: 2376
   selector:
     app: jenkins
